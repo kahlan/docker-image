@@ -13,6 +13,17 @@ RUN mkdir -p /usr/src/kahlan \
  && ln -s /usr/local/bin/kahlan /kahlan
 
 
+# Install Xdebug
+RUN yes | pecl install xdebug
+
+# Create wrapper for running Kahlan under Xdebug
+RUN echo '#!/bin/sh'                         >> /usr/local/bin/kahlan-xdebug \
+ && echo -n 'exec /usr/local/bin/php'        >> /usr/local/bin/kahlan-xdebug \
+ && echo -n ' -dzend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20131226/xdebug.so' \
+                                             >> /usr/local/bin/kahlan-xdebug \
+ && echo ' -f /usr/local/bin/kahlan -- $@'   >> /usr/local/bin/kahlan-xdebug \
+ && chmod +x /usr/local/bin/kahlan-xdebug \
+ && ln -s /usr/local/bin/kahlan-xdebug /kahlan-xdebug
 
 
 ENTRYPOINT ["/kahlan"]
