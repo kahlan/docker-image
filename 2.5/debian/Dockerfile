@@ -3,6 +3,8 @@
 
 FROM composer/composer:latest
 
+MAINTAINER CrysaLEAD <contact@crysalead.com>
+
 
 # Install Kahlan
 RUN mkdir -p /usr/src/kahlan \
