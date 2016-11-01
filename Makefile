@@ -75,7 +75,7 @@ everything:
 # Usage
 #
 # Build single concrete Dockerfile:
-# 	make dockerfile [DOCKERFILE=] [[var_(<template_var>)=]]
+#	make dockerfile [DOCKERFILE=] [[var_(<template_var>)=]]
 #
 # Build all Dockerfiles for currently supported Docker image versions:
 #	make all-dockerfiles
@@ -120,3 +120,39 @@ all-dockerfiles:
 		var_composer_tag=php5-alpine
 
 .PHONY: dockerfile all-dockerfiles
+
+
+
+
+# Create/update versioned Git tags for Kahlan Docker image
+# to trigger Dockerhub automated builds for versioned tags.
+#
+# To trigger Dockerhub builds we should push Git tags one by one
+# to avoid Github webhook limitations:
+# https://github.com/docker/hub-feedback/issues/520#issuecomment-238723501
+#
+#
+# Usage
+#
+# Create/update single concrete Git tag:
+#	make git-tag [GIT_TAG=] [GIT_TAGGED_BRANCH=]
+#
+# Create/update all Git tags for currently supported Docker image versions:
+#	make all-git-tags [GIT_TAGGED_BRANCH=]
+#
+
+GIT_TAG ?= 3.0
+GIT_TAGGED_BRANCH ?= master
+
+git-tag:
+	git tag -d $(GIT_TAG) || true
+	git tag $(GIT_TAG) $(GIT_TAGGED_BRANCH)
+	git push --force origin $(GIT_TAG)
+
+all-git-tags:
+	$(foreach tag, \
+		3.0.2 3.0 3 2.5.8 2.5 2, \
+		make git-tag GIT_TAG=$(tag); \
+	)
+
+.PHONY: git-tag all-git-tags
