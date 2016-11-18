@@ -8,6 +8,6 @@ repoName=${IMAGE_NAME:0:tagStart-1}
 
 # Tag and push image for each additional tag
 for tag in {3.0.2-alpine,3.0-alpine,3-alpine,alpine}; do
-    docker tag $IMAGE_NAME ${repoName}:${tag}
-    docker push ${repoName}:${tag}
+  docker tag $IMAGE_NAME ${repoName}:${tag}
+  docker push ${repoName}:${tag}
 done

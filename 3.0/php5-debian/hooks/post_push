@@ -8,6 +8,6 @@ repoName=${IMAGE_NAME:0:tagStart-1}
 
 # Tag and push image for each additional tag
 for tag in {3.0.2-php5,3.0-php5,3-php5,php5}; do
-    docker tag $IMAGE_NAME ${repoName}:${tag}
-    docker push ${repoName}:${tag}
+  docker tag $IMAGE_NAME ${repoName}:${tag}
+  docker push ${repoName}:${tag}
 done
