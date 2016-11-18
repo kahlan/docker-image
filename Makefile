@@ -71,14 +71,24 @@ everything:
 
 # Build Dockerfiles for Kahlan Docker image
 #
+# When Dockerhub triggers automated build all the tags defined in post_push hook
+# will be assigned to built image. It allows to link the same image with
+# different tags, and not to build identical image for each tag separately.
+# See details:
+# http://windsock.io/automated-docker-image-builds-with-multiple-tags/
+#
 #
 # Usage
 #
 # Build single concrete Dockerfile:
 #	make dockerfile [DOCKERFILE=] [[var_(<template_var>)=]]
 #
-# Build all Dockerfiles for currently supported Docker image versions:
-#	make all-dockerfiles
+# Create post_push Dockerhub hook for concrete Dockerfile:
+#	make dockerhub-post-push-hook [DOCKERFILE=] [TAGS=t1,t2,...]
+#
+# Build Dockerfile and its context for all currently supported Docker image
+# versions:
+#	make all-docker-stuff
 #
 
 var_kahlan_ver ?= 3.0.2
@@ -93,66 +103,61 @@ dockerfile:
 			composer_tag='$(var_composer_tag)' \
 		> $(DOCKERFILE)/Dockerfile
 
-all-dockerfiles:
+dockerhub-post-push-hook:
+	docker run --rm -i \
+		-v $(PWD)/post_push.j2:/data/post_push.j2:ro \
+		-e TEMPLATE=post_push.j2 \
+		pinterb/jinja2 \
+			image_tags='$(TAGS)' \
+		> $(DOCKERFILE)/hooks/post_push
+
+all-docker-stuff:
 	make dockerfile DOCKERFILE=3.0/debian \
 		var_kahlan_ver=3.0.2 \
 		var_composer_tag=latest
+	make dockerhub-post-push-hook DOCKERFILE=3.0/debian \
+		TAGS=3.0.2,3.0,3,latest
+
 	make dockerfile DOCKERFILE=3.0/php5-debian \
 		var_kahlan_ver=3.0.2 \
 		var_composer_tag=php5
+	make dockerhub-post-push-hook DOCKERFILE=3.0/php5-debian \
+		TAGS=3.0.2-php5,3.0-php5,3-php5,php5
+
 	make dockerfile DOCKERFILE=3.0/alpine \
 		var_kahlan_ver=3.0.2 \
 		var_composer_tag=alpine
+	make dockerhub-post-push-hook DOCKERFILE=3.0/alpine \
+		TAGS=3.0.2-alpine,3.0-alpine,3-alpine,alpine
+
 	make dockerfile DOCKERFILE=3.0/php5-alpine \
 		var_kahlan_ver=3.0.2 \
 		var_composer_tag=php5-alpine
+	make dockerhub-post-push-hook DOCKERFILE=3.0/php5-alpine \
+		TAGS=3.0.2-php5-alpine,3.0-php5-alpine,3-php5-alpine,php5-alpine
+
 	make dockerfile DOCKERFILE=2.5/debian \
 		var_kahlan_ver=2.5.8 \
 		var_composer_tag=latest
+	make dockerhub-post-push-hook DOCKERFILE=2.5/debian \
+		TAGS=2.5.8,2.5,2
+
 	make dockerfile DOCKERFILE=2.5/php5-debian \
 		var_kahlan_ver=2.5.8 \
 		var_composer_tag=php5
+	make dockerhub-post-push-hook DOCKERFILE=2.5/php5-debian \
+		TAGS=2.5.8-php5,2.5-php5,2-php5
+
 	make dockerfile DOCKERFILE=2.5/alpine \
 		var_kahlan_ver=2.5.8 \
 		var_composer_tag=alpine
+	make dockerhub-post-push-hook DOCKERFILE=2.5/alpine \
+		TAGS=2.5.8-alpine,2.5-alpine,2-alpine
+
 	make dockerfile DOCKERFILE=2.5/php5-alpine \
 		var_kahlan_ver=2.5.8 \
 		var_composer_tag=php5-alpine
+	make dockerhub-post-push-hook DOCKERFILE=2.5/php5-alpine \
+		TAGS=2.5.8-php5-alpine,2.5-php5-alpine,2-php5-alpine
 
-.PHONY: dockerfile all-dockerfiles
-
-
-
-
-# Create/update versioned Git tags for Kahlan Docker image
-# to trigger Dockerhub automated builds for versioned tags.
-#
-# To trigger Dockerhub builds we should push Git tags one by one
-# to avoid Github webhook limitations:
-# https://github.com/docker/hub-feedback/issues/520#issuecomment-238723501
-#
-#
-# Usage
-#
-# Create/update single concrete Git tag:
-#	make git-tag [GIT_TAG=] [GIT_TAGGED_BRANCH=]
-#
-# Create/update all Git tags for currently supported Docker image versions:
-#	make all-git-tags [GIT_TAGGED_BRANCH=]
-#
-
-GIT_TAG ?= 3.0
-GIT_TAGGED_BRANCH ?= master
-
-git-tag:
-	git tag -d $(GIT_TAG) || true
-	git tag $(GIT_TAG) $(GIT_TAGGED_BRANCH)
-	git push --force origin $(GIT_TAG)
-
-all-git-tags:
-	$(foreach tag, \
-		3.0.2 3.0 3 2.5.8 2.5 2, \
-		make git-tag GIT_TAG=$(tag); \
-	)
-
-.PHONY: git-tag all-git-tags
+.PHONY: dockerfile dockerhub-post-push-hook all-docker-stuff
