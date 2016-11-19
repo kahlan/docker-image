@@ -80,7 +80,7 @@ thus leads to much slimmer images in general.
 
 ### `kahlan/kahlan:<version>-php5-alpine`
 
-This [Alpine]((https://hub.docker.com/_/alpine))-based image is made to run
+This [Alpine](https://hub.docker.com/_/alpine)-based image is made to run
 Kahlan under PHP5.
 
 Note, that `phpdbg` is not available in this type of images.

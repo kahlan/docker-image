@@ -3,21 +3,21 @@
 #
 # Usage
 #
-# Build single container of concrete version:
-# 	make container [VERSION=] [DOCKERFILE=] [no-cache=(yes|no)]
+# Build single Docker image of concrete version:
+# 	make image [VERSION=] [DOCKERFILE=] [no-cache=(yes|no)]
 #
-# Tag single container with given tags:
+# Tag single Docker image with given tags:
 # 	make tags [VERSION=] [TAGS=t1,t2,...]
 #
-# Perform all operations for concrete version:
+# Build and tag Docker image of concrete version:
 # 	make all [VERSION=] [TAGS=t1,t2,...] [DOCKERFILE=] [no-cache=(yes|no)]
 #
-# Build and tag containers of all possible versions:
+# Build and tag Docker images of all possible versions:
 # 	make everything [no-cache=(yes|no)]
 #
 
 
-NAME := kahlan/kahlan
+IMAGE_NAME := kahlan/kahlan
 VERSION ?= 3.0.2-alpine
 TAGS ?= 3.0-alpine,3-alpine,alpine
 DOCKERFILE ?= 3.0/alpine
@@ -33,16 +33,16 @@ no-cache-arg = $(if $(call eq, $(no-cache), yes), --no-cache, $(empty))
 parsed-tags = $(subst $(comma), $(space), $(TAGS))
 
 
-container:
-	docker build $(no-cache-arg) -t $(NAME):$(VERSION) $(DOCKERFILE)
+image:
+	docker build $(no-cache-arg) -t $(IMAGE_NAME):$(VERSION) $(DOCKERFILE)
 
 tags:
 	$(foreach tag, $(parsed-tags), \
-		docker tag $(NAME):$(VERSION) $(NAME):$(tag); \
+		docker tag $(IMAGE_NAME):$(VERSION) $(IMAGE_NAME):$(tag); \
 	)
 
 
-all: | container tags
+all: | image tags
 
 
 everything:
@@ -64,7 +64,7 @@ everything:
 	         TAGS=2.5-php5-alpine,2-php5-alpine
 
 
-.PHONY: container tags all everything
+.PHONY: image tags all everything
 
 
 
@@ -161,3 +161,34 @@ all-docker-stuff:
 		TAGS=2.5.8-php5-alpine,2.5-php5-alpine,2-php5-alpine
 
 .PHONY: dockerfile dockerhub-post-push-hook all-docker-stuff
+
+
+
+
+# Test Kahlan Docker image(s)
+#
+#
+# Usage
+#
+# Run tests of concrete Docker image version:
+#	make test [VERSION=]
+#
+# Run tests for all possible Docker image versions:
+#	make all-tests [no-cache=(yes|no)]
+#
+
+test:
+	IMAGE=$(IMAGE_NAME):$(VERSION) \
+	./test/bats/bats test/suite.bats
+
+all-tests:
+	$(foreach dockerfile, \
+		3.0/debian 3.0/alpine 3.0/php5-debian 3.0/php5-alpine \
+		2.5/debian 2.5/alpine 2.5/php5-debian 2.5/php5-alpine \
+	, \
+		make image DOCKERFILE=$(dockerfile) \
+		           VERSION=$(subst /,-,$(dockerfile)); \
+		make test TAG=$(subst /,-,$(dockerfile)); \
+	)
+
+.PHONY: test all-tests

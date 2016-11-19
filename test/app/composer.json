@@ -1,0 +1,8 @@
+{
+    "name": "hero/superman",
+    "autoload": {
+        "psr-4": {
+            "Hero\\": "src/"
+        }
+    }
+}

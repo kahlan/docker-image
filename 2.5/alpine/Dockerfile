@@ -41,5 +41,3 @@ RUN echo '#!/bin/sh' >> /usr/local/bin/kahlan-phpdbg \
 
 
 ENTRYPOINT ["/kahlan"]
-
-CMD ["--help"]
