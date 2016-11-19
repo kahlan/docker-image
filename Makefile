@@ -41,9 +41,7 @@ tags:
 		docker tag $(IMAGE_NAME):$(VERSION) $(IMAGE_NAME):$(tag); \
 	)
 
-
 all: | image tags
-
 
 everything:
 	make all DOCKERFILE=3.0/debian VERSION=3.0.2 \
@@ -62,7 +60,6 @@ everything:
 	         TAGS=2.5-alpine,2-alpine
 	make all DOCKERFILE=2.5/php5-alpine VERSION=2.5.8-php5-alpine \
 	         TAGS=2.5-php5-alpine,2-php5-alpine
-
 
 .PHONY: image tags all everything
 
@@ -88,13 +85,14 @@ everything:
 #
 # Build Dockerfile and its context for all currently supported Docker image
 # versions:
-#	make all-docker-stuff
+#	make all-docker-sources
 #
 
 var_kahlan_ver ?= 3.0.2
 var_composer_tag ?= latest
 
 dockerfile:
+	mkdir -p $(DOCKERFILE)
 	docker run --rm -i \
 		-v $(PWD)/Dockerfile-template.j2:/data/Dockerfile.j2:ro \
 		-e TEMPLATE=Dockerfile.j2 \
@@ -104,6 +102,7 @@ dockerfile:
 		> $(DOCKERFILE)/Dockerfile
 
 dockerhub-post-push-hook:
+	mkdir -p $(DOCKERFILE)/hooks
 	docker run --rm -i \
 		-v $(PWD)/post_push.j2:/data/post_push.j2:ro \
 		-e TEMPLATE=post_push.j2 \
@@ -111,7 +110,7 @@ dockerhub-post-push-hook:
 			image_tags='$(TAGS)' \
 		> $(DOCKERFILE)/hooks/post_push
 
-all-docker-stuff:
+all-docker-sources:
 	make dockerfile DOCKERFILE=3.0/debian \
 		var_kahlan_ver=3.0.2 \
 		var_composer_tag=latest
@@ -160,7 +159,7 @@ all-docker-stuff:
 	make dockerhub-post-push-hook DOCKERFILE=2.5/php5-alpine \
 		TAGS=2.5.8-php5-alpine,2.5-php5-alpine,2-php5-alpine
 
-.PHONY: dockerfile dockerhub-post-push-hook all-docker-stuff
+.PHONY: dockerfile dockerhub-post-push-hook all-docker-sources
 
 
 
