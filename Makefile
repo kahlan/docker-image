@@ -177,18 +177,20 @@ all-docker-stuff:
 #	make all-tests [no-cache=(yes|no)]
 #
 
+dockerfiles := 3.0/debian 3.0/alpine 3.0/php5-debian 3.0/php5-alpine \
+               2.5/debian 2.5/alpine 2.5/php5-debian 2.5/php5-alpine
+
 test:
 	IMAGE=$(IMAGE_NAME):$(VERSION) \
 	./test/bats/bats test/suite.bats
 
 all-tests:
-	$(foreach dockerfile, \
-		3.0/debian 3.0/alpine 3.0/php5-debian 3.0/php5-alpine \
-		2.5/debian 2.5/alpine 2.5/php5-debian 2.5/php5-alpine \
-	, \
+	$(foreach dockerfile, $(dockerfiles), \
 		make image DOCKERFILE=$(dockerfile) \
-		           VERSION=$(subst /,-,$(dockerfile)); \
-		make test TAG=$(subst /,-,$(dockerfile)); \
+		           VERSION=$(subst /,-,$(dockerfile))-testing; \
+	)
+	$(foreach dockerfile, $(dockerfiles), \
+		make test VERSION=$(subst /,-,$(dockerfile))-testing; \
 	)
 
 .PHONY: test all-tests

@@ -6,4 +6,4 @@ services:
   - docker
 
 script:
-  - make all-tests
+  - make all-tests no-cache=yes

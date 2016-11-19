@@ -1,3 +1,11 @@
+[![Build Status](https://travis-ci.org/kahlan/docker-image.svg?branch=master)](https://travis-ci.org/kahlan/docker-image)
+[![Docker Pulls](https://img.shields.io/docker/pulls/kahlan/kahlan.svg)](https://hub.docker.com/r/kahlan/kahlan)
+[![GitHub link](https://img.shields.io/badge/github-link-blue.svg)](https://github.com/kahlan/docker-image)
+[![License](https://img.shields.io/github/license/kahlan/docker-image.svg)](https://github.com/kahlan/docker-image/blob/master/LICENSE.txt)
+
+
+
+
 ## Supported tags and respective `Dockerfile` links
 
 - `3.0.2`, `3.0`, `3`, `latest` [(3.0/debian/Dockerfile)](https://github.com/kahlan/docker-image/blob/master/3.0/debian/Dockerfile)
