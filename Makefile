@@ -98,7 +98,7 @@ dockerfile:
 		-e TEMPLATE=Dockerfile.j2 \
 		pinterb/jinja2 \
 			kahlan_ver='$(var_kahlan_ver)' \
-			composer_tag='$(var_composer_tag)' \
+			php_tag='$(var_php_tag)' \
 		> $(DOCKERFILE)/Dockerfile
 
 dockerhub-post-push-hook:
@@ -113,49 +113,49 @@ dockerhub-post-push-hook:
 all-docker-sources:
 	make dockerfile DOCKERFILE=3.0/debian \
 		var_kahlan_ver=3.0.2 \
-		var_composer_tag=latest
+		var_php_tag=cli
 	make dockerhub-post-push-hook DOCKERFILE=3.0/debian \
 		TAGS=3.0.2,3.0,3,latest
 
 	make dockerfile DOCKERFILE=3.0/php5-debian \
 		var_kahlan_ver=3.0.2 \
-		var_composer_tag=php5
+		var_php_tag=5-cli
 	make dockerhub-post-push-hook DOCKERFILE=3.0/php5-debian \
 		TAGS=3.0.2-php5,3.0-php5,3-php5,php5
 
 	make dockerfile DOCKERFILE=3.0/alpine \
 		var_kahlan_ver=3.0.2 \
-		var_composer_tag=alpine
+		var_php_tag=alpine
 	make dockerhub-post-push-hook DOCKERFILE=3.0/alpine \
 		TAGS=3.0.2-alpine,3.0-alpine,3-alpine,alpine
 
 	make dockerfile DOCKERFILE=3.0/php5-alpine \
 		var_kahlan_ver=3.0.2 \
-		var_composer_tag=php5-alpine
+		var_php_tag=5-alpine
 	make dockerhub-post-push-hook DOCKERFILE=3.0/php5-alpine \
 		TAGS=3.0.2-php5-alpine,3.0-php5-alpine,3-php5-alpine,php5-alpine
 
 	make dockerfile DOCKERFILE=2.5/debian \
 		var_kahlan_ver=2.5.8 \
-		var_composer_tag=latest
+		var_php_tag=cli
 	make dockerhub-post-push-hook DOCKERFILE=2.5/debian \
 		TAGS=2.5.8,2.5,2
 
 	make dockerfile DOCKERFILE=2.5/php5-debian \
 		var_kahlan_ver=2.5.8 \
-		var_composer_tag=php5
+		var_php_tag=5-cli
 	make dockerhub-post-push-hook DOCKERFILE=2.5/php5-debian \
 		TAGS=2.5.8-php5,2.5-php5,2-php5
 
 	make dockerfile DOCKERFILE=2.5/alpine \
 		var_kahlan_ver=2.5.8 \
-		var_composer_tag=alpine
+		var_php_tag=alpine
 	make dockerhub-post-push-hook DOCKERFILE=2.5/alpine \
 		TAGS=2.5.8-alpine,2.5-alpine,2-alpine
 
 	make dockerfile DOCKERFILE=2.5/php5-alpine \
 		var_kahlan_ver=2.5.8 \
-		var_composer_tag=php5-alpine
+		var_php_tag=5-alpine
 	make dockerhub-post-push-hook DOCKERFILE=2.5/php5-alpine \
 		TAGS=2.5.8-php5-alpine,2.5-php5-alpine,2-php5-alpine
 
