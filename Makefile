@@ -18,9 +18,9 @@
 
 
 IMAGE_NAME := kahlan/kahlan
-VERSION ?= 3.0.3-alpine
-TAGS ?= 3.0-alpine,3-alpine,alpine
-DOCKERFILE ?= 3.0/alpine
+VERSION ?= 3.1.0-alpine
+TAGS ?= 3.1-alpine,3-alpine,alpine
+DOCKERFILE ?= 3.1/alpine
 no-cache ?= no
 
 comma:= ,
@@ -44,14 +44,14 @@ tags:
 all: | image tags
 
 everything:
-	make all DOCKERFILE=3.0/debian VERSION=3.0.3 \
-	         TAGS=3.0,3,latest
-	make all DOCKERFILE=3.0/php5-debian VERSION=3.0.3 \
-	         TAGS=3.0-php5,3-php5,php5
-	make all DOCKERFILE=3.0/alpine VERSION=3.0.3-alpine \
-	         TAGS=3.0-alpine,3-alpine,alpine
-	make all DOCKERFILE=3.0/php5-alpine VERSION=3.0.3-php5-alpine \
-	         TAGS=3.0-php5-alpine,3-php5-alpine,php5-alpine
+	make all DOCKERFILE=3.1/debian VERSION=3.1.0 \
+	         TAGS=3.1,3,latest
+	make all DOCKERFILE=3.1/php5-debian VERSION=3.1.0 \
+	         TAGS=3.1-php5,3-php5,php5
+	make all DOCKERFILE=3.1/alpine VERSION=3.1.0-alpine \
+	         TAGS=3.1-alpine,3-alpine,alpine
+	make all DOCKERFILE=3.1/php5-alpine VERSION=3.1.0-php5-alpine \
+	         TAGS=3.1-php5-alpine,3-php5-alpine,php5-alpine
 	make all DOCKERFILE=2.5/debian VERSION=2.5.8 \
 	         TAGS=2.5,2
 	make all DOCKERFILE=2.5/php5-debian VERSION=2.5.8-php5 \
@@ -88,7 +88,7 @@ everything:
 #	make all-docker-sources
 #
 
-var_kahlan_ver ?= 3.0.3
+var_kahlan_ver ?= 3.1.0
 var_composer_tag ?= latest
 
 dockerfile:
@@ -111,29 +111,29 @@ dockerhub-post-push-hook:
 		> $(DOCKERFILE)/hooks/post_push
 
 all-docker-sources:
-	make dockerfile DOCKERFILE=3.0/debian \
-		var_kahlan_ver=3.0.3 \
+	make dockerfile DOCKERFILE=3.1/debian \
+		var_kahlan_ver=3.1.0 \
 		var_php_tag=cli
-	make dockerhub-post-push-hook DOCKERFILE=3.0/debian \
-		TAGS=3.0.3,3.0,3,latest
+	make dockerhub-post-push-hook DOCKERFILE=3.1/debian \
+		TAGS=3.1.0,3.1,3,latest
 
-	make dockerfile DOCKERFILE=3.0/php5-debian \
-		var_kahlan_ver=3.0.3 \
+	make dockerfile DOCKERFILE=3.1/php5-debian \
+		var_kahlan_ver=3.1.0 \
 		var_php_tag=5-cli
-	make dockerhub-post-push-hook DOCKERFILE=3.0/php5-debian \
-		TAGS=3.0.3-php5,3.0-php5,3-php5,php5
+	make dockerhub-post-push-hook DOCKERFILE=3.1/php5-debian \
+		TAGS=3.1.0-php5,3.1-php5,3-php5,php5
 
-	make dockerfile DOCKERFILE=3.0/alpine \
-		var_kahlan_ver=3.0.3 \
+	make dockerfile DOCKERFILE=3.1/alpine \
+		var_kahlan_ver=3.1.0 \
 		var_php_tag=alpine
-	make dockerhub-post-push-hook DOCKERFILE=3.0/alpine \
-		TAGS=3.0.3-alpine,3.0-alpine,3-alpine,alpine
+	make dockerhub-post-push-hook DOCKERFILE=3.1/alpine \
+		TAGS=3.1.0-alpine,3.1-alpine,3-alpine,alpine
 
-	make dockerfile DOCKERFILE=3.0/php5-alpine \
-		var_kahlan_ver=3.0.3 \
+	make dockerfile DOCKERFILE=3.1/php5-alpine \
+		var_kahlan_ver=3.1.0 \
 		var_php_tag=5-alpine
-	make dockerhub-post-push-hook DOCKERFILE=3.0/php5-alpine \
-		TAGS=3.0.3-php5-alpine,3.0-php5-alpine,3-php5-alpine,php5-alpine
+	make dockerhub-post-push-hook DOCKERFILE=3.1/php5-alpine \
+		TAGS=3.1.0-php5-alpine,3.1-php5-alpine,3-php5-alpine,php5-alpine
 
 	make dockerfile DOCKERFILE=2.5/debian \
 		var_kahlan_ver=2.5.8 \
@@ -181,7 +181,7 @@ all-docker-sources:
 
 BATS_VER ?= 0.4.0
 
-dockerfiles := 3.0/debian 3.0/alpine 3.0/php5-debian 3.0/php5-alpine \
+dockerfiles := 3.1/debian 3.1/alpine 3.1/php5-debian 3.1/php5-alpine \
                2.5/debian 2.5/alpine 2.5/php5-debian 2.5/php5-alpine
 
 test: deps-test
