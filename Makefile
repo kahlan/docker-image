@@ -172,18 +172,35 @@ all-docker-sources:
 # Run tests of concrete Docker image version:
 #	make test [VERSION=]
 #
+# Resolve project dependencies for running Bats tests:
+#	make deps-test [BATS_VER=]
+#
 # Run tests for all possible Docker image versions:
 #	make all-tests [no-cache=(yes|no)]
 #
 
+BATS_VER ?= 0.4.0
+
 dockerfiles := 3.0/debian 3.0/alpine 3.0/php5-debian 3.0/php5-alpine \
                2.5/debian 2.5/alpine 2.5/php5-debian 2.5/php5-alpine
 
-test:
+test: deps-test
 	IMAGE=$(IMAGE_NAME):$(VERSION) \
 	./test/bats/bats test/suite.bats
 
-all-tests:
+deps-test:
+ifeq ($(wildcard $(PWD)/test/bats),)
+	mkdir -p $(PWD)/test/bats/vendor
+	wget https://github.com/sstephenson/bats/archive/v$(BATS_VER).tar.gz \
+		-O $(PWD)/test/bats/vendor/bats.tar.gz
+	tar -xzf $(PWD)/test/bats/vendor/bats.tar.gz \
+		-C $(PWD)/test/bats/vendor
+	rm -f $(PWD)/test/bats/vendor/bats.tar.gz
+	ln -s $(PWD)/test/bats/vendor/bats-$(BATS_VER)/libexec/* \
+		$(PWD)/test/bats/
+endif
+
+all-tests: deps-test
 	(set -e ; $(foreach dockerfile, $(dockerfiles), \
 		make image DOCKERFILE=$(dockerfile) \
 		           VERSION=$(subst /,-,$(dockerfile))-testing ; \
@@ -192,4 +209,4 @@ all-tests:
 		make test VERSION=$(subst /,-,$(dockerfile))-testing ; \
 	))
 
-.PHONY: test all-tests
+.PHONY: test deps-test all-tests
