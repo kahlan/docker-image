@@ -4,8 +4,7 @@ How to use and maintain this repository
 All operations are automated as much as possible.
 
 - Images and description [on Docker Hub][1] will be automatically rebuilt on
-  [pushes to `master` branch][2] and on updates of parent `composer/composer`
-  image.
+  [pushes to `master` branch][2] and on updates of parent `php` Docker image.
 - [Travis CI][3] is used only for tests.
 - Generation of each `Dockerfile` and its context is automated via `Makefile`.
 
@@ -39,6 +38,7 @@ To update versions of images following steps are required:
 5.  If `Dockerfile`s layout was changed somehow (major version change, for
     example), you should check [build triggers on Docker Hub][2] and modify
     `Dockerfile`s paths there as required BEFORE push to `master` branch.
+6.  Push changes to `master` branch.
 
 
 
