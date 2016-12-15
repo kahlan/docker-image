@@ -37,9 +37,9 @@ image:
 	docker build $(no-cache-arg) -t $(IMAGE_NAME):$(VERSION) $(DOCKERFILE)
 
 tags:
-	$(foreach tag, $(parsed-tags), \
-		docker tag $(IMAGE_NAME):$(VERSION) $(IMAGE_NAME):$(tag); \
-	)
+	(set -e ; $(foreach tag, $(parsed-tags), \
+		docker tag $(IMAGE_NAME):$(VERSION) $(IMAGE_NAME):$(tag) ; \
+	))
 
 all: | image tags
 
@@ -184,12 +184,12 @@ test:
 	./test/bats/bats test/suite.bats
 
 all-tests:
-	$(foreach dockerfile, $(dockerfiles), \
+	(set -e ; $(foreach dockerfile, $(dockerfiles), \
 		make image DOCKERFILE=$(dockerfile) \
-		           VERSION=$(subst /,-,$(dockerfile))-testing; \
-	)
-	$(foreach dockerfile, $(dockerfiles), \
-		make test VERSION=$(subst /,-,$(dockerfile))-testing; \
-	)
+		           VERSION=$(subst /,-,$(dockerfile))-testing ; \
+	))
+	(set -e ; $(foreach dockerfile, $(dockerfiles), \
+		make test VERSION=$(subst /,-,$(dockerfile))-testing ; \
+	))
 
 .PHONY: test all-tests
