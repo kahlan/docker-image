@@ -8,10 +8,10 @@
 
 ## Supported tags and respective `Dockerfile` links
 
-- `3.0.2`, `3.0`, `3`, `latest` [(3.0/debian/Dockerfile)](https://github.com/kahlan/docker-image/blob/master/3.0/debian/Dockerfile)
-- `3.0.2-php5`, `3.0-php5`, `3-php5`, `php5` [(3.0/php5-debian/Dockerfile)](https://github.com/kahlan/docker-image/blob/master/3.0/php5-debian/Dockerfile)
-- `3.0.2-alpine`, `3.0-alpine`, `3-alpine`, `alpine` [(3.0/alpine/Dockerfile)](https://github.com/kahlan/docker-image/blob/master/3.0/alpine/Dockerfile)
-- `3.0.2-php5-alpine`, `3.0-php5-alpine`, `3-php5-alpine`, `php5-alpine` [(3.0/php5-alpine/Dockerfile)](https://github.com/kahlan/docker-image/blob/master/3.0/php5-alpine/Dockerfile)
+- `3.0.3`, `3.0`, `3`, `latest` [(3.0/debian/Dockerfile)](https://github.com/kahlan/docker-image/blob/master/3.0/debian/Dockerfile)
+- `3.0.3-php5`, `3.0-php5`, `3-php5`, `php5` [(3.0/php5-debian/Dockerfile)](https://github.com/kahlan/docker-image/blob/master/3.0/php5-debian/Dockerfile)
+- `3.0.3-alpine`, `3.0-alpine`, `3-alpine`, `alpine` [(3.0/alpine/Dockerfile)](https://github.com/kahlan/docker-image/blob/master/3.0/alpine/Dockerfile)
+- `3.0.3-php5-alpine`, `3.0-php5-alpine`, `3-php5-alpine`, `php5-alpine` [(3.0/php5-alpine/Dockerfile)](https://github.com/kahlan/docker-image/blob/master/3.0/php5-alpine/Dockerfile)
 - `2.5.8`, `2.5`, `2` [(2.5/debian/Dockerfile)](https://github.com/kahlan/docker-image/blob/master/2.5/debian/Dockerfile)
 - `2.5.8-php5`, `2.5-php5`, `2-php5` [(2.5/php5-debian/Dockerfile)](https://github.com/kahlan/docker-image/blob/master/2.5/php5-debian/Dockerfile)
 - `2.5.8-alpine`, `2.5-alpine`, `2-alpine` [(2.5/alpine/Dockerfile)](https://github.com/kahlan/docker-image/blob/master/2.5/alpine/Dockerfile)
