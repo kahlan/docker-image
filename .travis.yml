@@ -5,5 +5,18 @@ sudo: required
 services:
   - docker
 
+env:
+  - Dockerfile=3.1/debian
+  - Dockerfile=3.1/alpine
+  - Dockerfile=3.1/php5-debian
+  - Dockerfile=3.1/php5-alpine
+  - Dockerfile=2.5/debian
+  - Dockerfile=2.5/alpine
+  - Dockerfile=2.5/php5-debian
+  - Dockerfile=2.5/php5-alpine
+
+before_script:
+  - make image DOCKERFILE=$Dockerfile VERSION=test
+
 script:
-  - make all-tests no-cache=yes
+  - make test VERSION=test
