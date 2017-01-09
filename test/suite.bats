@@ -11,7 +11,11 @@
 @test "pure kahlan should run tests" {
   run docker run --rm -v $(pwd)/test/app:/app $IMAGE --no-colors=true
   [ "$status" -eq 0 ]
-  has_passed_line=`echo "$output" | grep "1 of 1 PASS" | wc -l`
+  num=3
+  if [[ "$IMAGE" == *"2.5"* ]]; then
+    num=1
+  fi
+  has_passed_line=`echo "$output" | grep "$num of $num PASS" | wc -l`
   [ "$has_passed_line" -eq 1 ]
 }
 
@@ -27,7 +31,11 @@
   run docker run --rm --entrypoint /kahlan-xdebug -v $(pwd)/test/app:/app \
                  $IMAGE --coverage=4 --no-colors=true
   [ "$status" -eq 0 ]
-  has_passed_line=`echo "$output" | grep "1 of 1 PASS" | wc -l`
+  num=3
+  if [[ "$IMAGE" == *"2.5"* ]]; then
+    num=1
+  fi
+  has_passed_line=`echo "$output" | grep "$num of $num PASS" | wc -l`
   has_coverage_summary=`echo "$output" | grep "Coverage Summary" | wc -l`
   [ "$has_passed_line" -eq 1 ]
   [ "$has_coverage_summary" -eq 1 ]
@@ -51,7 +59,11 @@
   run docker run --rm --entrypoint /kahlan-phpdbg -v $(pwd)/test/app:/app \
                  $IMAGE --coverage=4 --no-colors=true
   [ "$status" -eq 0 ]
-  has_passed_line=`echo "$output" | grep "1 of 1 PASS" | wc -l`
+  num=3
+  if [[ "$IMAGE" == *"2.5"* ]]; then
+    num=1
+  fi
+  has_passed_line=`echo "$output" | grep "$num of $num PASS" | wc -l`
   has_coverage_summary=`echo "$output" | grep "Coverage Summary" | wc -l`
   [ "$has_passed_line" -eq 1 ]
   [ "$has_coverage_summary" -eq 1 ]
