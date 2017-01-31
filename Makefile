@@ -1,198 +1,245 @@
-# Build Kahlan Docker image(s)
+# This Makefile automates possible operations of this project.
 #
+# Images and description on Docker Hub will be automatically rebuilt on
+# pushes to `master` branch of this repo and on updates of parent images.
 #
-# Usage
+# Note! Docker Hub `post_push` hook must be always up-to-date with default
+# values of current Makefile. To update it just use:
+#	make post-push-hook-all
 #
-# Build single Docker image of concrete version:
-# 	make image [VERSION=] [DOCKERFILE=] [no-cache=(yes|no)]
-#
-# Tag single Docker image with given tags:
-# 	make tags [VERSION=] [TAGS=t1,t2,...]
-#
-# Build and tag Docker image of concrete version:
-# 	make all [VERSION=] [TAGS=t1,t2,...] [DOCKERFILE=] [no-cache=(yes|no)]
-#
-# Build and tag Docker images of all possible versions:
-# 	make everything [no-cache=(yes|no)]
-#
+# It's still possible to build, tag and push images manually. Just use:
+#	make release-all
 
 
 IMAGE_NAME := kahlan/kahlan
-VERSION ?= 3.1.5-alpine
-TAGS ?= 3.1-alpine,3-alpine,alpine
-DOCKERFILE ?= 3.1/alpine
+ALL_IMAGES := \
+	3.1/debian:3.1.5,3.1,3,latest \
+	3.1/php5-debian:3.1.5-php5,3.1-php5,3-php5,php5 \
+	3.1/alpine:3.1.5-alpine,3.1-alpine,3-alpine,alpine \
+	3.1/php5-alpine:3.1.5-php5-alpine,3.1-php5-alpine,3-php5-alpine,php5-alpine \
+	2.5/debian:2.5.8,2.5,2 \
+	2.5/php5-debian:2.5.8-php5,2.5-php5,2-php5 \
+	2.5/alpine:2.5.8-alpine,2.5-alpine,2-alpine \
+	2.5/php5-alpine:2.5.8-php5-alpine,2.5-php5-alpine,2-php5-alpine
+#	<Dockerfile>:<version>,<tag1>,<tag2>,...
+
+
+# Default is first image from ALL_IMAGES list.
+DOCKERFILE ?= $(word 1,$(subst :, ,$(word 1,$(ALL_IMAGES))))
+VERSION ?=  $(word 1,$(subst $(comma), ,\
+                     $(word 2,$(subst :, ,$(word 1,$(ALL_IMAGES))))))
+TAGS ?= $(word 2,$(subst :, ,$(word 1,$(ALL_IMAGES))))
+
 no-cache ?= no
 
-comma:= ,
-empty:=
-space:= $(empty) $(empty)
+
+comma := ,
+empty :=
+space := $(empty) $(empty)
 eq = $(if $(or $(1),$(2)),$(and $(findstring $(1),$(2)),\
                                 $(findstring $(2),$(1))),1)
 
-no-cache-arg = $(if $(call eq, $(no-cache), yes), --no-cache, $(empty))
-parsed-tags = $(subst $(comma), $(space), $(TAGS))
 
+
+# Build Docker image.
+#
+# Usage:
+#	make image [no-cache=(yes|no)] [DOCKERFILE=] [VERSION=]
+
+no-cache-arg = $(if $(call eq, $(no-cache), yes), --no-cache, $(empty))
 
 image:
 	docker build $(no-cache-arg) -t $(IMAGE_NAME):$(VERSION) $(DOCKERFILE)
+
+
+
+# Tag Docker image with given tags.
+#
+# Usage:
+#	make tags [VERSION=] [TAGS=t1,t2,...]
+
+parsed-tags = $(subst $(comma), $(space), $(TAGS))
 
 tags:
 	(set -e ; $(foreach tag, $(parsed-tags), \
 		docker tag $(IMAGE_NAME):$(VERSION) $(IMAGE_NAME):$(tag) ; \
 	))
 
-all: | image tags
 
-everything:
-	make all DOCKERFILE=3.1/debian VERSION=3.1.5 \
-	         TAGS=3.1,3,latest
-	make all DOCKERFILE=3.1/php5-debian VERSION=3.1.5 \
-	         TAGS=3.1-php5,3-php5,php5
-	make all DOCKERFILE=3.1/alpine VERSION=3.1.5-alpine \
-	         TAGS=3.1-alpine,3-alpine,alpine
-	make all DOCKERFILE=3.1/php5-alpine VERSION=3.1.5-php5-alpine \
-	         TAGS=3.1-php5-alpine,3-php5-alpine,php5-alpine
-	make all DOCKERFILE=2.5/debian VERSION=2.5.8 \
-	         TAGS=2.5,2
-	make all DOCKERFILE=2.5/php5-debian VERSION=2.5.8-php5 \
-	         TAGS=2.5-php5,2-php5
-	make all DOCKERFILE=2.5/alpine VERSION=2.5.8-alpine \
-	         TAGS=2.5-alpine,2-alpine
-	make all DOCKERFILE=2.5/php5-alpine VERSION=2.5.8-php5-alpine \
-	         TAGS=2.5-php5-alpine,2-php5-alpine
+# Manually push Docker images to Docker Hub.
+#
+# Usage:
+#	make push [TAGS=t1,t2,...]
 
-.PHONY: image tags all everything
+push:
+	(set -e ; $(foreach tag, $(parsed-tags), \
+		docker push $(IMAGE_NAME):$(tag) ; \
+	))
 
 
 
+# Make manual release of Docker images to Docker Hub.
+#
+# Usage:
+#	make release [no-cache=(yes|no)] [DOCKERFILE=] [VERSION=] [TAGS=t1,t2,...]
 
-# Build Dockerfiles for Kahlan Docker image
-#
-# When Dockerhub triggers automated build all the tags defined in post_push hook
-# will be assigned to built image. It allows to link the same image with
-# different tags, and not to build identical image for each tag separately.
-# See details:
-# http://windsock.io/automated-docker-image-builds-with-multiple-tags/
-#
-#
-# Usage
-#
-# Build single concrete Dockerfile:
-#	make dockerfile [DOCKERFILE=] [[var_(<template_var>)=]]
-#
-# Create post_push Dockerhub hook for concrete Dockerfile:
-#	make dockerhub-post-push-hook [DOCKERFILE=] [TAGS=t1,t2,...]
-#
-# Build Dockerfile and its context for all currently supported Docker image
-# versions:
-#	make all-docker-sources
-#
+release: | image tags push
 
-var_kahlan_ver ?= 3.1.5
-var_composer_tag ?= latest
+
+
+# Make manual release of all supported Docker images to Docker Hub.
+#
+# Usage:
+#	make release-all [no-cache=(yes|no)]
+
+release-all:
+	(set -e ; $(foreach img,$(ALL_IMAGES), \
+		make release no-cache=$(no-cache) \
+			DOCKERFILE=$(word 1,$(subst :, ,$(img))) \
+			VERSION=$(word 1,$(subst $(comma), ,\
+			                 $(word 2,$(subst :, ,$(img))))) \
+			TAGS=$(word 2,$(subst :, ,$(img))) ; \
+	))
+
+
+
+# Generate Docker image sources.
+#
+# Usage:
+#	make src [DOCKERFILE=] [VERSION=] [TAGS=t1,t2,...]
+
+src: dockerfile post-push-hook
+
+
+
+# Generate sources for all supported Docker images.
+#
+# Usage:
+#	make src-all
+
+src-all:
+	(set -e ; $(foreach img,$(ALL_IMAGES), \
+		make src \
+			DOCKERFILE=$(word 1,$(subst :, ,$(img))) \
+			VERSION=$(word 1,$(subst $(comma), ,\
+			                 $(word 2,$(subst :, ,$(img))))) \
+			TAGS=$(word 2,$(subst :, ,$(img))) ; \
+	))
+
+
+
+# Generate Dockerfile from template.
+#
+# Usage:
+#	make dockerfile [DOCKERFILE=] [VERSION=]
 
 dockerfile:
 	mkdir -p $(DOCKERFILE)
-	docker run --rm -i \
-		-v $(PWD)/Dockerfile-template.j2:/data/Dockerfile.j2:ro \
-		-e TEMPLATE=Dockerfile.j2 \
-		pinterb/jinja2 \
-			kahlan_ver='$(var_kahlan_ver)' \
-			php_tag='$(var_php_tag)' \
+	docker run --rm -i -v $(PWD)/Dockerfile.tmpl.php:/Dockerfile.php:ro \
+		php:alpine php -f /Dockerfile.php -- \
+			--dockerfile='$(DOCKERFILE)' \
+			--version='$(VERSION)' \
 		> $(DOCKERFILE)/Dockerfile
 
-dockerhub-post-push-hook:
+
+
+# Generate Dockerfile from template for all supported Docker images.
+#
+# Usage:
+#	make dockerfile-all
+
+dockerfile-all:
+	(set -e ; $(foreach img,$(ALL_IMAGES), \
+		make dockerfile \
+			DOCKERFILE=$(word 1,$(subst :, ,$(img))) \
+			VERSION=$(word 1,$(subst $(comma), ,\
+			                 $(word 2,$(subst :, ,$(img))))) ; \
+	))
+
+
+
+# Create `post_push` Docker Hub hook.
+#
+# When Docker Hub triggers automated build all the tags defined in `post_push`
+# hook will be assigned to built image. It allows to link the same image with
+# different tags, and not to build identical image for each tag separately.
+# See details:
+# http://windsock.io/automated-docker-image-builds-with-multiple-tags
+#
+# Usage:
+#	make post-push-hook [DOCKERFILE=] [TAGS=t1,t2,...]
+
+post-push-hook:
 	mkdir -p $(DOCKERFILE)/hooks
-	docker run --rm -i \
-		-v $(PWD)/post_push.j2:/data/post_push.j2:ro \
-		-e TEMPLATE=post_push.j2 \
-		pinterb/jinja2 \
-			image_tags='$(TAGS)' \
+	docker run --rm -i -v $(PWD)/post_push.tmpl.php:/post_push.php:ro \
+		php:alpine php -f /post_push.php -- \
+			--image_tags='$(TAGS)' \
 		> $(DOCKERFILE)/hooks/post_push
 
-all-docker-sources:
-	make dockerfile DOCKERFILE=3.1/debian \
-		var_kahlan_ver=3.1.5 \
-		var_php_tag=cli
-	make dockerhub-post-push-hook DOCKERFILE=3.1/debian \
-		TAGS=3.1.5,3.1,3,latest
-
-	make dockerfile DOCKERFILE=3.1/php5-debian \
-		var_kahlan_ver=3.1.5 \
-		var_php_tag=5-cli
-	make dockerhub-post-push-hook DOCKERFILE=3.1/php5-debian \
-		TAGS=3.1.5-php5,3.1-php5,3-php5,php5
-
-	make dockerfile DOCKERFILE=3.1/alpine \
-		var_kahlan_ver=3.1.5 \
-		var_php_tag=alpine
-	make dockerhub-post-push-hook DOCKERFILE=3.1/alpine \
-		TAGS=3.1.5-alpine,3.1-alpine,3-alpine,alpine
-
-	make dockerfile DOCKERFILE=3.1/php5-alpine \
-		var_kahlan_ver=3.1.5 \
-		var_php_tag=5-alpine
-	make dockerhub-post-push-hook DOCKERFILE=3.1/php5-alpine \
-		TAGS=3.1.5-php5-alpine,3.1-php5-alpine,3-php5-alpine,php5-alpine
-
-	make dockerfile DOCKERFILE=2.5/debian \
-		var_kahlan_ver=2.5.8 \
-		var_php_tag=cli
-	make dockerhub-post-push-hook DOCKERFILE=2.5/debian \
-		TAGS=2.5.8,2.5,2
-
-	make dockerfile DOCKERFILE=2.5/php5-debian \
-		var_kahlan_ver=2.5.8 \
-		var_php_tag=5-cli
-	make dockerhub-post-push-hook DOCKERFILE=2.5/php5-debian \
-		TAGS=2.5.8-php5,2.5-php5,2-php5
-
-	make dockerfile DOCKERFILE=2.5/alpine \
-		var_kahlan_ver=2.5.8 \
-		var_php_tag=alpine
-	make dockerhub-post-push-hook DOCKERFILE=2.5/alpine \
-		TAGS=2.5.8-alpine,2.5-alpine,2-alpine
-
-	make dockerfile DOCKERFILE=2.5/php5-alpine \
-		var_kahlan_ver=2.5.8 \
-		var_php_tag=5-alpine
-	make dockerhub-post-push-hook DOCKERFILE=2.5/php5-alpine \
-		TAGS=2.5.8-php5-alpine,2.5-php5-alpine,2-php5-alpine
-
-.PHONY: dockerfile dockerhub-post-push-hook all-docker-sources
 
 
-
-
-# Test Kahlan Docker image(s)
+# Create `post_push` Docker Hub hook for all supported Docker images.
 #
+# Usage:
+#	make post-push-hook-all
+
+post-push-hook-all:
+	(set -e ; $(foreach img,$(ALL_IMAGES), \
+		make post-push-hook \
+			DOCKERFILE=$(word 1,$(subst :, ,$(img))) \
+			TAGS=$(word 2,$(subst :, ,$(img))) ; \
+	))
+
+
+
+# Run tests for Docker image.
 #
-# Usage
+# Usage:
+#	make test [DOCKERFILE=] [VERSION=]
+
+test: deps.bats
+	DOCKERFILE=$(DOCKERFILE) IMAGE=$(IMAGE_NAME):$(VERSION) \
+		./test/bats/bats test/suite.bats
+
+
+
+# Run tests for all supported Docker images.
 #
-# Run tests of concrete Docker image version:
-#	make test [VERSION=]
+# Usage:
+#	make test-all [prepare-images=(no|yes)]
+
+prepare-images ?= no
+
+test-all:
+ifeq ($(prepare-images),yes)
+	(set -e ; $(foreach img,$(ALL_IMAGES), \
+		make image no-cache=$(no-cache) \
+			DOCKERFILE=$(word 1,$(subst :, ,$(img))) \
+			VERSION=$(word 1,$(subst $(comma), ,\
+			                 $(word 2,$(subst :, ,$(img))))) ; \
+	))
+endif
+	(set -e ; $(foreach img,$(ALL_IMAGES), \
+		make test \
+			DOCKERFILE=$(word 1,$(subst :, ,$(img))) \
+			VERSION=$(word 1,$(subst $(comma), ,\
+			                 $(word 2,$(subst :, ,$(img))))) ; \
+	))
+
+
+
+# Resolve project dependencies for running tests.
 #
-# Resolve project dependencies for running Bats tests:
-#	make deps-test [BATS_VER=]
-#
-# Run tests for all possible Docker image versions:
-#	make all-tests [no-cache=(yes|no)]
-#
+# Usage:
+#	make deps.bats [BATS_VER=]
 
 BATS_VER ?= 0.4.0
 
-dockerfiles := 3.1/debian 3.1/alpine 3.1/php5-debian 3.1/php5-alpine \
-               2.5/debian 2.5/alpine 2.5/php5-debian 2.5/php5-alpine
-
-test: deps-test
-	IMAGE=$(IMAGE_NAME):$(VERSION) \
-	./test/bats/bats test/suite.bats
-
-deps-test:
+deps.bats:
 ifeq ($(wildcard $(PWD)/test/bats),)
 	mkdir -p $(PWD)/test/bats/vendor
-	wget https://github.com/sstephenson/bats/archive/v$(BATS_VER).tar.gz \
-		-O $(PWD)/test/bats/vendor/bats.tar.gz
+	curl -L -o $(PWD)/test/bats/vendor/bats.tar.gz \
+		https://github.com/sstephenson/bats/archive/v$(BATS_VER).tar.gz
 	tar -xzf $(PWD)/test/bats/vendor/bats.tar.gz \
 		-C $(PWD)/test/bats/vendor
 	rm -f $(PWD)/test/bats/vendor/bats.tar.gz
@@ -200,13 +247,11 @@ ifeq ($(wildcard $(PWD)/test/bats),)
 		$(PWD)/test/bats/
 endif
 
-all-tests: deps-test
-	(set -e ; $(foreach dockerfile, $(dockerfiles), \
-		make image DOCKERFILE=$(dockerfile) \
-		           VERSION=$(subst /,-,$(dockerfile))-testing ; \
-	))
-	(set -e ; $(foreach dockerfile, $(dockerfiles), \
-		make test VERSION=$(subst /,-,$(dockerfile))-testing ; \
-	))
 
-.PHONY: test deps-test all-tests
+
+.PHONY: image tags push \
+        release release-all \
+        src src-all \
+        dockerfile dockerfile-all \
+        post-push-hook post-push-hook-all \
+        test test-all deps.bats

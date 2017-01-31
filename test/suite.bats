@@ -1,5 +1,28 @@
 #!/usr/bin/env bats
 
+IMAGE_TYPE=$(echo "$DOCKERFILE" | cut -d '/' -f 2 | tr -d ' ')
+
+
+@test "post_push hook is up-to-date" {
+  run sh -c "cat Makefile | grep $DOCKERFILE: \
+                          | cut -d ':' -f 2 \
+                          | cut -d '\\' -f 1 \
+                          | tr -d ' '"
+  [ "$status" -eq 0 ]
+  [ "$output" != '' ]
+  expected="$output"
+
+  run sh -c "cat '$DOCKERFILE/hooks/post_push' \
+               | grep 'for tag in' \
+               | cut -d '{' -f 2 \
+               | cut -d '}' -f 1"
+  [ "$status" -eq 0 ]
+  [ "$output" != '' ]
+  actual="$output"
+
+  [ "$actual" == "$expected" ]
+}
+
 
 @test "pure kahlan command should work" {
   run docker run --rm $IMAGE --help
@@ -35,7 +58,7 @@
 
 
 @test "kahlan should work under phpdbg" {
-  if [[ "$IMAGE" == *"php5"* ]]; then
+  if [[ "$IMAGE_TYPE" == "php5"* ]]; then
     skip "no phpdbg on php5"
   fi
   run docker run --rm --entrypoint /kahlan-phpdbg $IMAGE --help
@@ -45,7 +68,7 @@
 }
 
 @test "kahlan should run tests with coverage under phpdbg" {
-  if [[ "$IMAGE" == *"php5"* ]]; then
+  if [[ "$IMAGE_TYPE" == "php5"* ]]; then
     skip "no phpdbg on php5"
   fi
   run docker run --rm --entrypoint /kahlan-phpdbg -v $(pwd)/test/app:/app \

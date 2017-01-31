@@ -16,7 +16,7 @@ env:
   - Dockerfile=2.5/php5-alpine
 
 before_script:
-  - make image DOCKERFILE=$Dockerfile VERSION=$(echo $Dockerfile | tr / -)-test
+  - make image DOCKERFILE=$Dockerfile VERSION=test
 
 script:
-  - make test VERSION=$(echo $Dockerfile | tr / -)-test
+  - make test DOCKERFILE=$Dockerfile VERSION=test
