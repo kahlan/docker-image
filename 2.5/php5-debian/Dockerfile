@@ -27,6 +27,11 @@ RUN curl -L -o /tmp/kahlan.tar.gz \
  && ln -s /usr/src/kahlan-*/bin/kahlan /usr/local/bin/kahlan \
  && ln -s /usr/local/bin/kahlan /kahlan \
 
+ # Patch Kahlan binary to not segfault under phpdbg:
+ # https://github.com/kahlan/docker-image/issues/2#issuecomment-279222869
+ # https://github.com/kahlan/kahlan/blob/2.5.8/bin/kahlan#L33
+ && sed -i -e '33d' bin/kahlan \
+
  && rm -rf /tmp/kahlan* /tmp/composer*
 
 
