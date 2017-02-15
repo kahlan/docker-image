@@ -16,11 +16,7 @@ ALL_IMAGES := \
 	3.1/debian:3.1.7,3.1,3,latest \
 	3.1/php5-debian:3.1.7-php5,3.1-php5,3-php5,php5 \
 	3.1/alpine:3.1.7-alpine,3.1-alpine,3-alpine,alpine \
-	3.1/php5-alpine:3.1.7-php5-alpine,3.1-php5-alpine,3-php5-alpine,php5-alpine \
-	2.5/debian:2.5.8,2.5,2 \
-	2.5/php5-debian:2.5.8-php5,2.5-php5,2-php5 \
-	2.5/alpine:2.5.8-alpine,2.5-alpine,2-alpine \
-	2.5/php5-alpine:2.5.8-php5-alpine,2.5-php5-alpine,2-php5-alpine
+	3.1/php5-alpine:3.1.7-php5-alpine,3.1-php5-alpine,3-php5-alpine,php5-alpine
 #	<Dockerfile>:<version>,<tag1>,<tag2>,...
 
 
