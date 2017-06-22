@@ -4,8 +4,9 @@
 # pushes to `master` branch of this repo and on updates of parent images.
 #
 # Note! Docker Hub `post_push` hook must be always up-to-date with default
-# values of current Makefile. To update it just use:
+# values of current Makefile. To update it just use one of:
 #	make post-push-hook-all
+#	make src-all
 #
 # It's still possible to build, tag and push images manually. Just use:
 #	make release-all
@@ -13,10 +14,10 @@
 
 IMAGE_NAME := kahlan/kahlan
 ALL_IMAGES := \
-	3.1/debian:3.1.15,3.1,3,latest \
-	3.1/php5-debian:3.1.15-php5,3.1-php5,3-php5,php5 \
-	3.1/alpine:3.1.15-alpine,3.1-alpine,3-alpine,alpine \
-	3.1/php5-alpine:3.1.15-php5-alpine,3.1-php5-alpine,3-php5-alpine,php5-alpine
+	3.1/debian:3.1.16,3.1,3,latest \
+	3.1/php5-debian:3.1.16-php5,3.1-php5,3-php5,php5 \
+	3.1/alpine:3.1.16-alpine,3.1-alpine,3-alpine,alpine \
+	3.1/php5-alpine:3.1.16-php5-alpine,3.1-php5-alpine,3-php5-alpine,php5-alpine
 #	<Dockerfile>:<version>,<tag1>,<tag2>,...
 
 
