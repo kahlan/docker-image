@@ -14,10 +14,14 @@
 
 IMAGE_NAME := kahlan/kahlan
 ALL_IMAGES := \
-	3.1/debian:3.1.18,3.1,3,latest \
-	3.1/php5-debian:3.1.18-php5,3.1-php5,3-php5,php5 \
-	3.1/alpine:3.1.18-alpine,3.1-alpine,3-alpine,alpine \
-	3.1/php5-alpine:3.1.18-php5-alpine,3.1-php5-alpine,3-php5-alpine,php5-alpine
+	4.0/debian:4.0.0,4.0,4,latest \
+	4.0/php5-debian:4.0.0-php5,4.0-php5,4-php5,php5 \
+	4.0/alpine:4.0.0-alpine,4.0-alpine,4-alpine,alpine \
+	4.0/php5-alpine:4.0.0-php5-alpine,4.0-php5-alpine,4-php5-alpine,php5-alpine \
+	3.1/debian:3.1.18,3.1,3 \
+	3.1/php5-debian:3.1.18-php5,3.1-php5,3-php5 \
+	3.1/alpine:3.1.18-alpine,3.1-alpine,3-alpine \
+	3.1/php5-alpine:3.1.18-php5-alpine,3.1-php5-alpine,3-php5-alpine
 #	<Dockerfile>:<version>,<tag1>,<tag2>,...
 
 
@@ -26,8 +30,6 @@ DOCKERFILE ?= $(word 1,$(subst :, ,$(word 1,$(ALL_IMAGES))))
 VERSION ?=  $(word 1,$(subst $(comma), ,\
                      $(word 2,$(subst :, ,$(word 1,$(ALL_IMAGES))))))
 TAGS ?= $(word 2,$(subst :, ,$(word 1,$(ALL_IMAGES))))
-
-no-cache ?= no
 
 
 comma := ,
@@ -43,7 +45,7 @@ eq = $(if $(or $(1),$(2)),$(and $(findstring $(1),$(2)),\
 # Usage:
 #	make image [no-cache=(yes|no)] [DOCKERFILE=] [VERSION=]
 
-no-cache-arg = $(if $(call eq, $(no-cache), yes), --no-cache, $(empty))
+no-cache-arg = $(if $(call eq,$(no-cache),yes),--no-cache,)
 
 image:
 	docker build $(no-cache-arg) -t $(IMAGE_NAME):$(VERSION) $(DOCKERFILE)
@@ -55,10 +57,8 @@ image:
 # Usage:
 #	make tags [VERSION=] [TAGS=t1,t2,...]
 
-parsed-tags = $(subst $(comma), $(space), $(TAGS))
-
 tags:
-	(set -e ; $(foreach tag, $(parsed-tags), \
+	(set -e ; $(foreach tag, $(subst $(comma), ,$(TAGS)), \
 		docker tag $(IMAGE_NAME):$(VERSION) $(IMAGE_NAME):$(tag) ; \
 	))
 
@@ -69,7 +69,7 @@ tags:
 #	make push [TAGS=t1,t2,...]
 
 push:
-	(set -e ; $(foreach tag, $(parsed-tags), \
+	(set -e ; $(foreach tag, $(subst $(comma), ,$(TAGS)), \
 		docker push $(IMAGE_NAME):$(tag) ; \
 	))
 
