@@ -11,22 +11,22 @@ RUN echo -n 'memory_limit=-1' > /usr/local/etc/php/conf.d/memory-limit.ini
 
 
 # Install Kahlan
-RUN curl -L -o /tmp/kahlan.tar.gz \
+RUN curl -fL -o /tmp/kahlan.tar.gz \
          https://github.com/kahlan/kahlan/archive/3.1.18.tar.gz \
-
- && curl -L -o /tmp/composer-setup.php \
+    \
+ && curl -fL -o /tmp/composer-setup.php \
          https://getcomposer.org/installer \
- && curl -L -o /tmp/composer-setup.sig \
+ && curl -fL -o /tmp/composer-setup.sig \
          https://composer.github.io/installer.sig \
  && php -r "if (hash('SHA384', file_get_contents('/tmp/composer-setup.php')) !== trim(file_get_contents('/tmp/composer-setup.sig'))) { echo 'Invalid installer' . PHP_EOL; exit(1); }" \
  && php /tmp/composer-setup.php --install-dir=/tmp --filename=composer \
-
+    \
  && tar -xzf /tmp/kahlan.tar.gz -C /usr/src \
  && cd /usr/src/kahlan-*/ \
  && /tmp/composer install --no-dev --optimize-autoloader \
  && ln -s /usr/src/kahlan-*/bin/kahlan /usr/local/bin/kahlan \
  && ln -s /usr/local/bin/kahlan /kahlan \
-
+    \
  && rm -rf /tmp/kahlan* /tmp/composer*
 
 
