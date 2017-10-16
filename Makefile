@@ -14,10 +14,10 @@
 
 IMAGE_NAME := kahlan/kahlan
 ALL_IMAGES := \
-	4.0/debian:4.0.4,4.0,4,latest \
-	4.0/php5-debian:4.0.4-php5,4.0-php5,4-php5,php5 \
-	4.0/alpine:4.0.4-alpine,4.0-alpine,4-alpine,alpine \
-	4.0/php5-alpine:4.0.4-php5-alpine,4.0-php5-alpine,4-php5-alpine,php5-alpine \
+	4.0/debian:4.0.5,4.0,4,latest \
+	4.0/php5-debian:4.0.5-php5,4.0-php5,4-php5,php5 \
+	4.0/alpine:4.0.5-alpine,4.0-alpine,4-alpine,alpine \
+	4.0/php5-alpine:4.0.5-php5-alpine,4.0-php5-alpine,4-php5-alpine,php5-alpine \
 	3.1/debian:3.1.18,3.1,3 \
 	3.1/php5-debian:3.1.18-php5,3.1-php5,3-php5 \
 	3.1/alpine:3.1.18-alpine,3.1-alpine,3-alpine \
