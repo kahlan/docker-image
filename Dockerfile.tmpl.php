@@ -38,11 +38,12 @@ RUN curl -fL -o /tmp/kahlan.tar.gz \
     \
  && tar -xzf /tmp/kahlan.tar.gz -C /usr/src \
  && cd /usr/src/kahlan-*/ \
- && /tmp/composer install --no-dev --optimize-autoloader \
+ && /tmp/composer install --no-dev --optimize-autoloader --no-progress \
  && ln -s /usr/src/kahlan-*/bin/kahlan /usr/local/bin/kahlan \
  && ln -s /usr/local/bin/kahlan /kahlan \
     \
- && rm -rf /tmp/kahlan* /tmp/composer*
+ && rm -rf /root/.composer \
+           /tmp/*
 
 
 # Install Xdebug
