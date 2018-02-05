@@ -50,11 +50,11 @@ RUN curl -fL -o /tmp/kahlan.tar.gz \
 <? if ($isAlpine) { ?>
 RUN apk add --update --no-cache --virtual .tools-deps \
             autoconf g++ libtool make \
- && (yes | pecl install xdebug) \
+ && (yes | pecl install xdebug<?= $isPHP5 ? '-2.5.5' : ''; ?>) \
  && apk del .tools-deps \
  && rm -rf /var/cache/apk/*
 <? } else { ?>
-RUN yes | pecl install xdebug
+RUN yes | pecl install xdebug<?= $isPHP5 ? '-2.5.5' : ''; ?>
 <? } ?>
 
 # Create wrapper for running Kahlan under Xdebug

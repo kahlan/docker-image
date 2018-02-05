@@ -34,7 +34,7 @@ RUN curl -fL -o /tmp/kahlan.tar.gz \
 # Install Xdebug
 RUN apk add --update --no-cache --virtual .tools-deps \
             autoconf g++ libtool make \
- && (yes | pecl install xdebug) \
+ && (yes | pecl install xdebug-2.5.5) \
  && apk del .tools-deps \
  && rm -rf /var/cache/apk/*
 

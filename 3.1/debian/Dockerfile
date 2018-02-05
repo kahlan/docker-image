@@ -33,7 +33,6 @@ RUN curl -fL -o /tmp/kahlan.tar.gz \
 
 # Install Xdebug
 RUN yes | pecl install xdebug
-
 # Create wrapper for running Kahlan under Xdebug
 RUN ext=$(ls /usr/local/lib/php/extensions/no-debug-non-zts-*/xdebug.so \
                                                                  | tr -d '\n') \
