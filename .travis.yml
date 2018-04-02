@@ -6,10 +6,10 @@ services:
   - docker
 
 env:
-  - Dockerfile=4.0/debian
-  - Dockerfile=4.0/alpine
-  - Dockerfile=4.0/php5-debian
-  - Dockerfile=4.0/php5-alpine
+  - Dockerfile=4.1/debian
+  - Dockerfile=4.1/alpine
+  - Dockerfile=4.1/php5-debian
+  - Dockerfile=4.1/php5-alpine
   - Dockerfile=3.1/debian
   - Dockerfile=3.1/alpine
   - Dockerfile=3.1/php5-debian
