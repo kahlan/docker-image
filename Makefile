@@ -46,7 +46,8 @@ eq = $(if $(or $(1),$(2)),$(and $(findstring $(1),$(2)),\
 #	           [no-cache=(no|yes)]
 
 image:
-	docker build --network=host $(if $(call eq,$(no-cache),yes),--no-cache,) \
+	docker build --network=host \
+		$(if $(call eq,$(no-cache),yes),--no-cache --pull,) \
 		-t $(IMAGE_NAME):$(VERSION) $(DOCKERFILE)
 
 
@@ -58,9 +59,13 @@ image:
 #	          [TAGS=<docker-tag-1>[,<docker-tag-2>...]]
 
 tags:
-	(set -e ; $(foreach tag, $(subst $(comma), ,$(TAGS)), \
-		docker tag $(IMAGE_NAME):$(VERSION) $(IMAGE_NAME):$(tag) ; \
-	))
+	$(foreach tag,$(subst $(comma), ,$(TAGS)),\
+		$(call tags.do,$(VERSION),$(tag)))
+define tags.do
+	$(eval from := $(strip $(1)))
+	$(eval to := $(strip $(2)))
+	docker tag $(IMAGE_NAME):$(from) $(IMAGE_NAME):$(to)
+endef
 
 
 # Manually push Docker images to Docker Hub.
@@ -69,9 +74,12 @@ tags:
 #	make push [TAGS=<docker-tag-1>[,<docker-tag-2>...]]
 
 push:
-	(set -e ; $(foreach tag, $(subst $(comma), ,$(TAGS)), \
-		docker push $(IMAGE_NAME):$(tag) ; \
-	))
+	$(foreach tag,$(subst $(comma), ,$(TAGS)),\
+		$(call push.do,$(tag)))
+define push.do
+	$(eval tag := $(strip $(1)))
+	docker push $(IMAGE_NAME):$(tag)
+endef
 
 
 
@@ -92,13 +100,15 @@ release: | image tags push
 #	make release-all [no-cache=(no|yes)]
 
 release-all:
-	(set -e ; $(foreach img,$(ALL_IMAGES), \
-		make release no-cache=$(no-cache) \
+	$(foreach img,$(ALL_IMAGES),$(call release-all.do,$(img)))
+define release-all.do
+	$(eval img := $(strip $(1)))
+	@make release no-cache=$(no-cache) \
 			DOCKERFILE=$(word 1,$(subst :, ,$(img))) \
 			VERSION=$(word 1,$(subst $(comma), ,\
 			                 $(word 2,$(subst :, ,$(img))))) \
-			TAGS=$(word 2,$(subst :, ,$(img))) ; \
-	))
+			TAGS=$(word 2,$(subst :, ,$(img)))
+endef
 
 
 
@@ -118,13 +128,14 @@ src: dockerfile post-push-hook
 #	make src-all
 
 src-all:
-	(set -e ; $(foreach img,$(ALL_IMAGES), \
-		make src \
-			DOCKERFILE=$(word 1,$(subst :, ,$(img))) \
-			VERSION=$(word 1,$(subst $(comma), ,\
-			                 $(word 2,$(subst :, ,$(img))))) \
-			TAGS=$(word 2,$(subst :, ,$(img))) ; \
-	))
+	$(foreach img,$(ALL_IMAGES),$(call src-all.do,$(img)))
+define src-all.do
+	$(eval img := $(strip $(1)))
+	@make src DOCKERFILE=$(word 1,$(subst :, ,$(img))) \
+	          VERSION=$(word 1,$(subst $(comma), ,\
+	                           $(word 2,$(subst :, ,$(img))))) \
+	          TAGS=$(word 2,$(subst :, ,$(img)))
+endef
 
 
 
@@ -150,12 +161,13 @@ dockerfile:
 #	make dockerfile-all
 
 dockerfile-all:
-	(set -e ; $(foreach img,$(ALL_IMAGES), \
-		make dockerfile \
-			DOCKERFILE=$(word 1,$(subst :, ,$(img))) \
-			VERSION=$(word 1,$(subst $(comma), ,\
-			                 $(word 2,$(subst :, ,$(img))))) ; \
-	))
+	$(foreach img,$(ALL_IMAGES),$(call dockerfile-all.do,$(img)))
+define dockerfile-all.do
+	$(eval img := $(strip $(1)))
+	@make dockerfile DOCKERFILE=$(word 1,$(subst :, ,$(img))) \
+	                 VERSION=$(word 1,$(subst $(comma), ,\
+	                                  $(word 2,$(subst :, ,$(img)))))
+endef
 
 
 
@@ -186,11 +198,12 @@ post-push-hook:
 #	make post-push-hook-all
 
 post-push-hook-all:
-	(set -e ; $(foreach img,$(ALL_IMAGES), \
-		make post-push-hook \
-			DOCKERFILE=$(word 1,$(subst :, ,$(img))) \
-			TAGS=$(word 2,$(subst :, ,$(img))) ; \
-	))
+	$(foreach img,$(ALL_IMAGES),$(call post-push-hook-all.do,$(img)))
+define post-push-hook-all.do
+	$(eval img := $(strip $(1)))
+	@make post-push-hook DOCKERFILE=$(word 1,$(subst :, ,$(img))) \
+	                     TAGS=$(word 2,$(subst :, ,$(img)))
+endef
 
 
 
@@ -215,19 +228,19 @@ test: deps.bats
 
 test-all:
 ifeq ($(prepare-images),yes)
-	(set -e ; $(foreach img,$(ALL_IMAGES), \
-		make image no-cache=$(no-cache) \
-			DOCKERFILE=$(word 1,$(subst :, ,$(img))) \
-			VERSION=$(word 1,$(subst $(comma), ,\
-			                 $(word 2,$(subst :, ,$(img))))) ; \
-	))
+	$(foreach img,$(ALL_IMAGES),\
+		$(call test-all.do,image no-cache=$(no-cache),$(img)))
 endif
-	(set -e ; $(foreach img,$(ALL_IMAGES), \
-		make test \
-			DOCKERFILE=$(word 1,$(subst :, ,$(img))) \
-			VERSION=$(word 1,$(subst $(comma), ,\
-			                 $(word 2,$(subst :, ,$(img))))) ; \
-	))
+	$(foreach img,$(ALL_IMAGES),\
+		$(call test-all.do,test,$(img)))
+define test-all.do
+	$(eval act := $(strip $(1)))
+	$(eval img := $(strip $(2)))
+	@make $(act) \
+		DOCKERFILE=$(word 1,$(subst :, ,$(img))) \
+		VERSION=$(word 1,$(subst $(comma), ,\
+		                 $(word 2,$(subst :, ,$(img)))))
+endef
 
 
 
@@ -245,7 +258,7 @@ ifeq ($(wildcard test/bats),)
 		https://github.com/sstephenson/bats/archive/v$(BATS_VER).tar.gz
 	tar -xzf test/bats/vendor/bats.tar.gz -C test/bats/vendor/
 	@rm -f test/bats/vendor/bats.tar.gz
-	ln -s $(PWD)/test/bats/vendor/bats-$(BATS_VER)/libexec/* test/bats/
+	ln -s "$(PWD)"/test/bats/vendor/bats-$(BATS_VER)/libexec/* test/bats/
 endif
 
 
