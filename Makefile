@@ -209,8 +209,8 @@ endef
 
 # Run tests for Docker image.
 #
-# Documentation of Bats:
-#	https://github.com/sstephenson/bats
+# Documentation of Bats-core:
+#	https://github.com/bats-core/bats-core
 #
 # Usage:
 #	make test [DOCKERFILE=<dockerfile-dir>] [VERSION=<image-version>]
@@ -249,16 +249,16 @@ endef
 # Usage:
 #	make deps.bats [BATS_VER=<bats-version>]
 
-BATS_VER ?= 0.4.0
+BATS_VER ?= 1.0.1
 
 deps.bats:
 ifeq ($(wildcard test/bats),)
 	@mkdir -p test/bats/vendor/
 	curl -fL -o test/bats/vendor/bats.tar.gz \
-		https://github.com/sstephenson/bats/archive/v$(BATS_VER).tar.gz
+		https://github.com/bats-core/bats-core/archive/v$(BATS_VER).tar.gz
 	tar -xzf test/bats/vendor/bats.tar.gz -C test/bats/vendor/
 	@rm -f test/bats/vendor/bats.tar.gz
-	ln -s "$(PWD)"/test/bats/vendor/bats-$(BATS_VER)/libexec/* test/bats/
+	ln -s "$(PWD)"/test/bats/vendor/bats-core-$(BATS_VER)/bin/* test/bats/
 endif
 
 
