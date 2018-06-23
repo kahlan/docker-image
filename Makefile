@@ -46,7 +46,7 @@ eq = $(if $(or $(1),$(2)),$(and $(findstring $(1),$(2)),\
 #	           [no-cache=(no|yes)]
 
 image:
-	docker build --network=host \
+	docker build --network=host --force-rm \
 		$(if $(call eq,$(no-cache),yes),--no-cache --pull,) \
 		-t $(IMAGE_NAME):$(VERSION) $(DOCKERFILE)
 
