@@ -12,7 +12,7 @@ RUN echo -n 'memory_limit=-1' > /usr/local/etc/php/conf.d/memory-limit.ini
 
 # Install Kahlan
 RUN curl -fL -o /tmp/kahlan.tar.gz \
-         https://github.com/kahlan/kahlan/archive/4.1.5.tar.gz \
+         https://github.com/kahlan/kahlan/archive/4.1.6.tar.gz \
     \
  && curl -fL -o /tmp/composer-setup.php \
          https://getcomposer.org/installer \
