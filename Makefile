@@ -14,10 +14,10 @@
 
 IMAGE_NAME := kahlan/kahlan
 ALL_IMAGES := \
-	4/debian:4.4.0,4.4,4,latest \
-	4/php5-debian:4.4.0-php5,4.4-php5,4-php5,php5 \
-	4/alpine:4.4.0-alpine,4.4-alpine,4-alpine,alpine \
-	4/php5-alpine:4.4.0-php5-alpine,4.4-php5-alpine,4-php5-alpine,php5-alpine
+	4/debian:4.5.0,4.5,4,latest \
+	4/php5-debian:4.5.0-php5,4.5-php5,4-php5,php5 \
+	4/alpine:4.5.0-alpine,4.5-alpine,4-alpine,alpine \
+	4/php5-alpine:4.5.0-php5-alpine,4.5-php5-alpine,4-php5-alpine,php5-alpine
 #	<Dockerfile>:<version>,<tag1>,<tag2>,...
 
 
