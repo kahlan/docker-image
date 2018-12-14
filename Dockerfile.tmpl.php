@@ -46,14 +46,17 @@ RUN curl -fL -o /tmp/kahlan.tar.gz \
            /tmp/*
 
 
-# Install Xdebug
 <? if ($isAlpine) { ?>
-RUN apk add --update --no-cache --virtual .tools-deps \
-            autoconf g++ libtool make \
+# Install Xdebug and make
+RUN apk add --update --no-cache \
+            make \
+ && apk add --no-cache --virtual .tools-deps \
+            autoconf g++ libtool \
  && (yes | pecl install xdebug<?= $isPHP5 ? '-2.5.5' : ''; ?>) \
  && apk del .tools-deps \
  && rm -rf /var/cache/apk/*
 <? } else { ?>
+# Install Xdebug
 RUN yes | pecl install xdebug<?= $isPHP5 ? '-2.5.5' : ''; ?>
 <? } ?>
 
