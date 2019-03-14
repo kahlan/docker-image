@@ -11,11 +11,11 @@ $KahlanVer = reset(explode('-', $var['version']));
 <? if ($isAlpine && $isPHP5) { ?>
 FROM php:5-alpine
 <? } elseif ($isAlpine) { ?>
-FROM php:7.2-alpine
+FROM php:alpine
 <? } elseif ($isPHP5) { ?>
 FROM php:5-cli
 <? } else { ?>
-FROM php:7.2-cli
+FROM php:cli
 <? } ?>
 
 MAINTAINER CrysaLEAD <contact@crysalead.com>
