@@ -8,10 +8,10 @@ Kahlan Docker Image
 
 ## Supported tags and respective `Dockerfile` links
 
-- `4.5.0`, `4.5`, `4`, `latest` [(4/debian/Dockerfile)][101]
-- `4.5.0-php5`, `4.5-php5`, `4-php5`, `php5` [(4/php5-debian/Dockerfile)][102]
-- `4.5.0-alpine`, `4.5-alpine`, `4-alpine`, `alpine` [(4/alpine/Dockerfile)][103]
-- `4.5.0-php5-alpine`, `4.5-php5-alpine`, `4-php5-alpine`, `php5-alpine` [(4/php5-alpine/Dockerfile)][104]
+- `4.6.1`, `4.6`, `4`, `latest` [(4/debian/Dockerfile)][101]
+- `4.6.1-php5`, `4.6-php5`, `4-php5`, `php5` [(4/php5-debian/Dockerfile)][102]
+- `4.6.1-alpine`, `4.6-alpine`, `4-alpine`, `alpine` [(4/alpine/Dockerfile)][103]
+- `4.6.1-php5-alpine`, `4.6-php5-alpine`, `4-php5-alpine`, `php5-alpine` [(4/php5-alpine/Dockerfile)][104]
 
 
 
@@ -31,19 +31,19 @@ Kahlan is a full-featured Unit & BDD test framework a la RSpec/JSpec which uses 
 ## How to use this image
 
 Just map your working directory to `/app` inside container:
-```
+```bash
 docker run --rm -v $(pwd):/app kahlan/kahlan
 ```
 
 If you need to specify some options just do so:
-```
+```bash
 docker run --rm -v $(pwd):/app kahlan/kahlan --help
 docker run --rm -v $(pwd):/app kahlan/kahlan --config=my/kahlan-config.php
 ```
 
 By default Kahlan is not running under [Xdebug or phpdbg, so code coverage doesn't work][6].  
 If you require it, just use the wrapper you wish:
-```
+```bash
 docker run --rm -v $(pwd):/app --entrypoint /kahlan-phpdbg kahlan/kahlan
 docker run --rm -v $(pwd):/app --entrypoint /kahlan-xdebug kahlan/kahlan
 ```
