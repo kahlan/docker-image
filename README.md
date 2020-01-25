@@ -8,10 +8,10 @@ Kahlan Docker Image
 
 ## Supported tags and respective `Dockerfile` links
 
-- `4.7.0`, `4.7`, `4`, `latest` [(4/debian/Dockerfile)][101]
-- `4.7.0-php5`, `4.7-php5`, `4-php5`, `php5` [(4/php5-debian/Dockerfile)][102]
-- `4.7.0-alpine`, `4.7-alpine`, `4-alpine`, `alpine` [(4/alpine/Dockerfile)][103]
-- `4.7.0-php5-alpine`, `4.7-php5-alpine`, `4-php5-alpine`, `php5-alpine` [(4/php5-alpine/Dockerfile)][104]
+- `4.7.1`, `4.7`, `4`, `latest` [(4/debian/Dockerfile)][101]
+- `4.7.1-php5`, `4.7-php5`, `4-php5`, `php5` [(4/php5-debian/Dockerfile)][102]
+- `4.7.1-alpine`, `4.7-alpine`, `4-alpine`, `alpine` [(4/alpine/Dockerfile)][103]
+- `4.7.1-php5-alpine`, `4.7-php5-alpine`, `4-php5-alpine`, `php5-alpine` [(4/php5-alpine/Dockerfile)][104]
 
 
 

@@ -9,7 +9,7 @@ tagStart=$(expr index "$IMAGE_NAME" :)
 repoName=${IMAGE_NAME:0:tagStart-1}
 
 # Tag and push image for each additional tag
-for tag in {4.7.0-php5-alpine,4.7-php5-alpine,4-php5-alpine,php5-alpine}; do
+for tag in {4.7.1-php5-alpine,4.7-php5-alpine,4-php5-alpine,php5-alpine}; do
   docker tag $IMAGE_NAME ${repoName}:${tag}
   docker push ${repoName}:${tag}
 done
