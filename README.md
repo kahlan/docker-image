@@ -8,10 +8,10 @@ Kahlan Docker Image
 
 ## Supported tags and respective `Dockerfile` links
 
-- `4.7.2`, `4.7`, `4`, `latest` [(4/debian/Dockerfile)][101]
-- `4.7.2-php5`, `4.7-php5`, `4-php5`, `php5` [(4/php5-debian/Dockerfile)][102]
-- `4.7.2-alpine`, `4.7-alpine`, `4-alpine`, `alpine` [(4/alpine/Dockerfile)][103]
-- `4.7.2-php5-alpine`, `4.7-php5-alpine`, `4-php5-alpine`, `php5-alpine` [(4/php5-alpine/Dockerfile)][104]
+- [`4.7.2`, `4.7`, `4`, `latest`][101]
+- [`4.7.2-php5`, `4.7-php5`, `4-php5`, `php5`][102]
+- [`4.7.2-alpine`, `4.7-alpine`, `4-alpine`, `alpine`][103]
+- [`4.7.2-php5-alpine`, `4.7-php5-alpine`, `4-php5-alpine`, `php5-alpine`][104]
 
 
 
@@ -21,7 +21,7 @@ Kahlan Docker Image
 Kahlan is a full-featured Unit & BDD test framework a la RSpec/JSpec which uses a describe-it syntax and moves testing in PHP one step forward.  
 **Kahlan allows to stub or monkey patch your code directly like in Ruby or JavaScript without any required PECL-extentions.**
 
-> [kahlan.github.io](https://kahlan.github.io/docs)
+> [kahlan.github.io][Kahlan]
 
 ![Kahlan Logo](https://kahlan.github.io/docs/img/logo.png)
 
@@ -82,9 +82,13 @@ Note, that `phpdbg` is not available in this type of images. See [why][5].
 
 ## License
 
-Kahlan itself is licensed under [MIT license][91].
+[Kahlan] is licensed under [MIT license][91].
 
-Kahlan Docker Image is licensed under [MIT license][90] too.
+As with all Docker images, these likely also contain other software which may be under other licenses (such as Bash, etc from the base distribution, along with any direct or indirect dependencies of the primary software being contained).
+
+As for any pre-built image usage, it is the image user's responsibility to ensure that any use of this image complies with any relevant licenses for all software contained within.
+
+The [sources][7] for producing `kahlan/kahlan` Docker images are licensed under [MIT license][90] too.
 
 
 
@@ -99,11 +103,14 @@ If you have any problems with or questions about this image, please contact us t
 
 
 
+[Kahlan]: https://kahlan.github.io/docs
+
 [1]: http://alpinelinux.org
 [2]: https://hub.docker.com/_/alpine
 [3]: https://hub.docker.com/_/php
 [5]: https://github.com/kahlan/docker-image/issues/1#issuecomment-256260083
 [6]: https://github.com/kahlan/kahlan#requirements
+[7]: https://github.com/kahlan/docker-image
 [80]: https://github.com/kahlan/docker-image/issues
 [90]: https://github.com/kahlan/docker-image/blob/master/LICENSE.txt
 [91]: https://github.com/kahlan/kahlan/blob/master/LICENSE.txt
