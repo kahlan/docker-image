@@ -6,6 +6,13 @@ Kahlan Docker Image
 
 
 
+## Status
+
+__PROJECT IS CLOSED AND ARCHIVED. NO MAINTAINING WILL BE CONTINUED.__
+
+
+
+
 ## Supported tags and respective `Dockerfile` links
 
 - [`4.7.7`, `4.7`, `4`, `latest`][101]
